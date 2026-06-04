@@ -14,7 +14,7 @@ const Player = lazy(() => import('@/pages/Player').then(module => ({ default: mo
 // A simple loading fallback for Suspense
 function PageLoader() {
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-[#141414]">
+    <div className="flex h-screen w-full items-center justify-center bg-[#141414] overflow-hidden">
       <div className="w-12 h-12 rounded-full border-4 border-white/20 border-t-[#E50914] animate-spin" />
     </div>
   );

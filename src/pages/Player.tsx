@@ -12,7 +12,7 @@ export function Player() {
       {/* Back Button */}
       <button 
         onClick={() => navigate(-1)}
-        className="absolute top-8 left-8 z-50 text-white hover:text-gray-300 transition-colors flex items-center gap-2 text-xl font-medium"
+        className="absolute top-4 md:top-8 left-4 md:left-8 z-50 text-white hover:text-gray-300 transition-colors flex items-center gap-2 text-xl font-medium drop-shadow-md bg-black/40 p-2 rounded-full md:bg-transparent md:p-0"
       >
         <ArrowLeft className="w-8 h-8" />
         <span className="drop-shadow-md">Back</span>

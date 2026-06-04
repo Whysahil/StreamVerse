@@ -83,8 +83,8 @@ export function MovieDetails() {
           <ArrowLeft className="w-6 h-6" />
         </button>
 
-        <div className="absolute bottom-[10%] left-4 md:left-12 max-w-3xl z-10">
-          <h1 className="text-5xl md:text-7xl font-extrabold mb-4 drop-shadow-md tracking-tighter leading-tight text-white">
+        <div className="absolute bottom-[2%] md:bottom-[10%] left-4 md:left-12 pr-4 md:pr-0 w-full md:w-auto max-w-[90%] md:max-w-3xl z-10">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-4 drop-shadow-md tracking-tighter leading-tight text-white line-clamp-2 md:line-clamp-none">
             {movie?.title || movie?.name || movie?.original_name}
           </h1>
           

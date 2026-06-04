@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   auth
 } from '@/lib/firebase';
@@ -17,6 +19,23 @@ export function Login() {
   const [error, setError] = useState('');
   
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!auth) return;
+    setLoading(true);
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) {
+          navigate('/');
+        }
+      })
+      .catch((err: any) => {
+        setError(err.message || 'Google sign in failed after redirect.');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [navigate]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +54,16 @@ export function Login() {
       }
       navigate('/');
     } catch (err: any) {
-      setError(err.message || 'An error occurred during authentication');
+      const errorCode = err.code;
+      if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/wrong-password' || errorCode === 'auth/user-not-found') {
+        setError('Invalid email or password.');
+      } else if (errorCode === 'auth/email-already-in-use') {
+        setError('An account with this email already exists.');
+      } else if (errorCode === 'auth/weak-password') {
+        setError('Password should be at least 6 characters.');
+      } else {
+        setError(err.message || 'An error occurred during authentication');
+      }
     } finally {
       setLoading(false);
     }
@@ -49,21 +77,34 @@ export function Login() {
     try {
       setLoading(true);
       const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
       await signInWithPopup(auth, provider);
       navigate('/');
     } catch (err: any) {
-      setError(err.message || 'Google sign in failed');
-    } finally {
-      setLoading(false);
+      const errorCode = err.code;
+      if (errorCode === 'auth/unauthorized-domain') {
+         setError('This domain is not authorized for OAuth. Please add it to your Firebase Console (Authentication > Settings > Authorized domains).');
+         setLoading(false);
+      } else if (errorCode === 'auth/popup-closed-by-user') {
+         setError('Sign-in popup was closed before completion. Please try again.');
+         setLoading(false);
+      } else if (errorCode === 'auth/popup-blocked') {
+         // Fallback to redirect if popup is blocked
+         const provider = new GoogleAuthProvider();
+         await signInWithRedirect(auth, provider);
+      } else {
+         setError(err.message || 'Google sign in failed. Please try again.');
+         setLoading(false);
+      }
     }
   };
 
   return (
-    <div 
-      className="relative flex h-screen w-screen flex-col bg-[#050505] md:items-center md:justify-center md:bg-transparent overflow-hidden object-contain"
-    >
+    <div className="relative flex min-h-screen w-full flex-col bg-[#050505] md:items-center md:justify-center overflow-x-hidden">
       <div 
-         className="absolute inset-0 bg-cover bg-center"
+         className="absolute inset-0 bg-cover bg-center hidden md:block"
          style={{
            backgroundImage: "url('https://assets.nflxext.com/ffe/siteui/vlv3/f841d4c7-10e1-40af-bcae-07a3f8dc141a/f6d7434e-d6de-4185-a6d4-c77a2d08737b/US-en-20220502-popsignuptwoweeks-perspective_alpha_website_medium.jpg')",
          }}

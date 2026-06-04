@@ -34,7 +34,8 @@
   position: absolute;
   top: -100px;
   left: -100px;
-  width: 600px;
+  width: 100%;
+  max-width: 600px;
   height: 600px;
   background: radial-gradient(circle, rgba(229, 9, 20, 0.15) 0%, transparent 70%);
   pointer-events: none;

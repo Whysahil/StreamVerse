@@ -44,7 +44,7 @@ export function Navbar() {
 
   return (
     <header className={cn(
-      "fixed top-0 w-full z-50 transition-all duration-300 px-4 md:px-12 h-20 flex items-center justify-between",
+      "fixed top-0 w-full z-50 transition-all duration-300 px-4 md:px-12 h-16 md:h-20 flex items-center justify-between",
       isScrolled ? "bg-[#050505]/95 backdrop-blur-md border-b border-white/5 shadow-md" : "bg-gradient-to-b from-black/90 to-transparent"
     )}>
       <div className="flex items-center gap-8 md:gap-10">

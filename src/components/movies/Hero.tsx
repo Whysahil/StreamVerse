@@ -98,7 +98,7 @@ export function Hero() {
           </span>
         </div>
         
-        <h1 className="text-5xl md:text-7xl font-extrabold mb-4 tracking-tighter leading-tight text-white drop-shadow-md max-w-3xl">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-4 tracking-tighter leading-tight text-white drop-shadow-md max-w-[90%] sm:max-w-3xl">
           {movie?.title || movie?.name || movie?.original_name}
         </h1>
         
