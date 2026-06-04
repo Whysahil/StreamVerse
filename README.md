@@ -8,7 +8,12 @@ StreamVerse is a modern streaming platform inspired by the user experience of po
 
 The project was built to demonstrate production-level frontend development practices, scalable architecture, API integration, authentication workflows, performance optimization, and modern UI/UX implementation.
 ✨ Features
-<img width="1335" height="524" alt="5" src="https://github.com/user-attachments/assets/c5e06f05-e9f1-45c0-8613-243e4302fd21" />
+<img width="1352" height="607" alt="1" src="https://github.com/user-attachments/assets/c2579e7a-58be-4a16-91da-279c34146bc5" />
+<img width="1353" height="605" alt="2" src="https://github.com/user-attachments/assets/ee6fa0e9-f905-4695-8331-36ec617b1a81" />
+<img width="1357" height="610" alt="3" src="https://github.com/user-attachments/assets/bac9f17e-f3e8-4b44-ada5-fb1fd8fcb345" />
+<img width="1341" height="525" alt="4" src="https://github.com/user-attachments/assets/7ef5fb1f-5d1b-427a-973b-19a167881689" />
+<img width="1335" height="524" alt="5" src="https://github.com/user-attachments/assets/399fd6e5-3137-41e9-bc58-d0a8fdd48dbb" />
+
 
 - 🔐 Firebase Authentication
 - 🎥 TMDB Movie & TV Show Discovery
