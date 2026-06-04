@@ -1,0 +1,6 @@
+{
+  "name": "Netflix Clone",
+  "description": "A responsive, production-ready Netflix clone using React, Vite, Tailwind CSS, Firebase Auth, and the TMDB API.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
