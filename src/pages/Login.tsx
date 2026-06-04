@@ -43,6 +43,10 @@ export function Login() {
       setError('Firebase is not configured. Add environment variables.');
       return;
     }
+    if (!navigator.onLine) {
+      setError('You are currently offline. Please check your internet connection.');
+      return;
+    }
     setLoading(true);
     setError('');
 
@@ -61,6 +65,8 @@ export function Login() {
         setError('An account with this email already exists.');
       } else if (errorCode === 'auth/weak-password') {
         setError('Password should be at least 6 characters.');
+      } else if (errorCode === 'auth/network-request-failed' || err.message?.includes('offline')) {
+        setError('Network error. Please check your internet connection.');
       } else {
         setError(err.message || 'An error occurred during authentication');
       }
@@ -72,6 +78,10 @@ export function Login() {
   const handleGoogleSignIn = async () => {
     if (!auth) {
       setError('Firebase is not configured. Add environment variables.');
+      return;
+    }
+    if (!navigator.onLine) {
+      setError('You are currently offline. Please check your internet connection.');
       return;
     }
     try {
