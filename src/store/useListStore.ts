@@ -1,36 +1,79 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { db } from '@/lib/firebase';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useProfileStore } from '@/store/useProfileStore';
 import type { Movie } from '@/types';
 
 interface ListState {
   myList: Movie[];
+  setList: (movies: Movie[]) => void;
   addToList: (movie: Movie) => void;
   removeFromList: (id: number) => void;
   isInList: (id: number) => boolean;
+  syncFromFirebase: () => Promise<void>;
 }
 
-// In a real app we would sync this with Firestore, 
-// using local storage via zustand/persist for immediate portfolio demo value
-// preventing the need for deep Firestore rules setup.
 export const useListStore = create<ListState>()(
   persist(
     (set, get) => ({
       myList: [],
-      addToList: (movie) => {
+      setList: (movies) => set({ myList: movies }),
+      addToList: async (movie) => {
         const list = get().myList;
         if (!list.find((m) => m.id === movie.id)) {
-          set({ myList: [...list, movie] });
+          const newList = [...list, movie];
+          set({ myList: newList });
+          
+          const user = useAuthStore.getState().user;
+          const profile = useProfileStore.getState().currentProfile;
+          if (db && user && profile) {
+            try {
+              await setDoc(doc(db, 'users', user.uid, 'profiles', profile.id, 'lists', 'myList'), { movies: newList });
+            } catch (e) {
+              console.error("Failed to sync add to list to Firebase", e);
+            }
+          }
         }
       },
-      removeFromList: (id) => {
-        set({ myList: get().myList.filter((m) => m.id !== id) });
+      removeFromList: async (id) => {
+        const newList = get().myList.filter((m) => m.id !== id);
+        set({ myList: newList });
+        
+        const user = useAuthStore.getState().user;
+        const profile = useProfileStore.getState().currentProfile;
+        if (db && user && profile) {
+          try {
+            await setDoc(doc(db, 'users', user.uid, 'profiles', profile.id, 'lists', 'myList'), { movies: newList });
+          } catch (e) {
+            console.error("Failed to sync remove from list to Firebase", e);
+          }
+        }
       },
       isInList: (id) => {
         return !!get().myList.find((m) => m.id === id);
       },
+      syncFromFirebase: async () => {
+        const user = useAuthStore.getState().user;
+        const profile = useProfileStore.getState().currentProfile;
+        if (db && user && profile) {
+          try {
+            const docRef = doc(db, 'users', user.uid, 'profiles', profile.id, 'lists', 'myList');
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists() && docSnap.data().movies) {
+              set({ myList: docSnap.data().movies });
+            } else {
+              set({ myList: [] }); // Start fresh if no list exists for this profile on Firebase
+            }
+          } catch (e) {
+            console.error("Failed to fetch list from Firebase", e);
+          }
+        }
+      }
     }),
     {
-      name: 'netflix-my-list',
+      name: 'verse-my-list',
     }
   )
 );

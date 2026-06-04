@@ -4,28 +4,24 @@ import { Row } from '@/components/movies/Row';
 import { ContinueWatchingRow } from '@/components/movies/ContinueWatchingRow';
 import { requests } from '@/lib/tmdb';
 
-export function Home() {
+export function Series() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   return (
     <div className="relative min-h-screen bg-[#050505] pb-16">
-      <Hero />
+      <Hero type="tv" />
       <div className="relative z-20 pb-24 top-[-2rem] md:top-[-4rem]">
         <ContinueWatchingRow />
         <Row 
-          title="Trending Now" 
-          fetchUrl={requests.fetchTrending} 
+          title="Trending Series" 
+          fetchUrl={requests.fetchTrendingSeries}
           isLargeRow
         />
         <Row title="Verse Originals" fetchUrl={requests.fetchNetflixOriginals} />
-        <Row title="Top Rated" fetchUrl={requests.fetchTopRated} />
-        <Row title="Action Movies" fetchUrl={requests.fetchActionMovies} />
-        <Row title="Comedy Movies" fetchUrl={requests.fetchComedyMovies} />
-        <Row title="Horror Movies" fetchUrl={requests.fetchHorrorMovies} />
-        <Row title="Romance Movies" fetchUrl={requests.fetchRomanceMovies} />
-        <Row title="Documentaries" fetchUrl={requests.fetchDocumentaries} />
+        <Row title="Popular Series" fetchUrl={requests.fetchPopularSeries} />
+        <Row title="Top Rated Series" fetchUrl={requests.fetchTopRatedSeries} />
       </div>
     </div>
   );

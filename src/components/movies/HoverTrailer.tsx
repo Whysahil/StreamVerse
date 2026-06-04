@@ -124,7 +124,7 @@ export function HoverTrailer({ movie, isLargeRow, inGrid }: HoverTrailerProps) {
 
           {/* Title Overlay for non-large rows when not hovered */}
           {!isLargeRow && !isHovered && (
-             <div className="absolute inset-0 netflix-gradient-bottom opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3 z-30">
+             <div className="absolute inset-0 cinematic-gradient-bottom opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3 z-30">
                <p className="text-white text-xs md:text-sm font-semibold truncate w-full drop-shadow-md">
                  {movie.title || movie.name}
                </p>

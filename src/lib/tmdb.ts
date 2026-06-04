@@ -10,6 +10,13 @@ export const requests = {
   fetchHorrorMovies: `/discover/movie?with_genres=27`,
   fetchRomanceMovies: `/discover/movie?with_genres=10749`,
   fetchDocumentaries: `/discover/movie?with_genres=99`,
+  fetchTrendingSeries: `/trending/tv/week?language=en-US`,
+  fetchPopularSeries: `/tv/popular?language=en-US`,
+  fetchTopRatedSeries: `/tv/top_rated?language=en-US`,
+  fetchTrendingMovies: `/trending/movie/week?language=en-US`,
+  fetchPopularMovies: `/movie/popular?language=en-US`,
+  fetchTopRatedMovies: `/movie/top_rated?language=en-US`,
+  fetchSciFiMovies: `/discover/movie?with_genres=878`,
   searchMovies: (query: string) => `/search/multi?language=en-US&query=${encodeURIComponent(query)}&page=1&include_adult=false`,
   fetchMovieDetails: (mediaType: string, id: string | number) => `/${mediaType}/${id}?language=en-US`,
   fetchMovieVideos: (mediaType: string, id: string | number) => `/${mediaType}/${id}/videos?language=en-US`

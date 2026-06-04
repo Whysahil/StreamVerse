@@ -4,7 +4,11 @@ import { Play, Info, AlertCircle } from 'lucide-react';
 import { fetchTMDB, requests, IMAGE_BASE_URL } from '@/lib/tmdb';
 import type { Movie } from '@/types';
 
-export function Hero() {
+interface HeroProps {
+  type?: 'movie' | 'tv' | 'all';
+}
+
+export function Hero({ type = 'all' }: HeroProps) {
   const [movie, setMovie] = useState<Movie | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -16,7 +20,11 @@ export function Hero() {
       setLoading(true);
       setError(false);
       try {
-        const request = await fetchTMDB(requests.fetchNetflixOriginals);
+        const endpoint = type === 'movie' 
+          ? requests.fetchTrendingMovies 
+          : requests.fetchNetflixOriginals;
+          
+        const request = await fetchTMDB(endpoint);
         if (isMounted) {
           if (request && request.results && request.results.length > 0) {
             setMovie(request.results[Math.floor(Math.random() * request.results.length)]);
@@ -32,7 +40,7 @@ export function Hero() {
     }
     fetchData();
     return () => { isMounted = false; };
-  }, []);
+  }, [type]);
 
   function truncate(str: string | undefined, n: number) {
     return str?.length! > n ? str?.substring(0, n - 1) + "..." : str;
@@ -64,12 +72,14 @@ export function Hero() {
     );
   }
 
+  const mediaType = movie?.media_type || type === 'movie' ? 'movie' : 'tv';
+
   const handlePlayClick = () => {
-    navigate(`/play/tv/${movie.id}`);
+    navigate(`/play/${mediaType}/${movie?.id}`);
   };
 
   const handleMoreInfoClick = () => {
-    navigate(`/movie/tv/${movie.id}`);
+    navigate(`/movie/${mediaType}/${movie?.id}`);
   };
 
   return (
@@ -88,7 +98,7 @@ export function Hero() {
         <div className="absolute inset-0 bg-black/30" />
       </div>
       
-      <div className="absolute inset-0 netflix-gradient-bottom z-0" />
+      <div className="absolute inset-0 cinematic-gradient-bottom z-0" />
 
       <div className="relative z-10 h-full flex flex-col justify-end px-4 md:px-12 pb-24 md:pb-32">
         <div className="flex items-center gap-2 mb-4">

@@ -7,8 +7,8 @@ export function PrivateRoute() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-netflix-dark flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-netflix" />
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-[#E50914]" />
       </div>
     );
   }

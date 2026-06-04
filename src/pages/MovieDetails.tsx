@@ -30,17 +30,17 @@ export function MovieDetails() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-netflix-dark flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-netflix" />
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-[#E50914]" />
       </div>
     );
   }
 
   if (!movie) {
     return (
-      <div className="min-h-screen pt-24 px-12 text-white">
+      <div className="min-h-screen pt-24 px-12 text-white bg-[#050505]">
         <h2>Content not found.</h2>
-        <button onClick={() => navigate('/')} className="mt-4 bg-netflix px-4 py-2 rounded">Go Home</button>
+        <button onClick={() => navigate('/')} className="mt-4 bg-[#E50914] px-4 py-2 rounded">Go Home</button>
       </div>
     );
   }
@@ -56,7 +56,7 @@ export function MovieDetails() {
   };
 
   return (
-    <div className="relative min-h-screen bg-netflix-dark">
+    <div className="relative min-h-screen bg-[#050505]">
       <div className="hero-glow z-10" />
       <div 
         className="relative h-[60vh] md:h-[85vh] w-full"
@@ -74,7 +74,7 @@ export function MovieDetails() {
           <div className="absolute inset-0 bg-black/40" />
         </div>
 
-        <div className="absolute inset-0 netflix-gradient-bottom z-0" />
+        <div className="absolute inset-0 cinematic-gradient-bottom z-0" />
         
         <button 
           onClick={() => navigate(-1)}

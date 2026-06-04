@@ -39,7 +39,7 @@ export function Footer() {
         
         <div className="flex flex-col items-center gap-4 text-center mt-2 w-full">
           <p className="text-gray-400">
-            &copy; {currentYear} StreamVerse. All Rights Reserved.
+            &copy; {currentYear} Verse. All Rights Reserved.
           </p>
           
           <div className="h-px w-32 bg-gradient-to-r from-transparent via-gray-600 to-transparent my-1" />

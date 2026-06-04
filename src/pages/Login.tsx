@@ -113,7 +113,7 @@ export function Login() {
       </div>
       
       <header className="absolute top-0 w-full px-6 py-6 md:px-12 z-20 flex justify-between items-center">
-        <h1 className="text-[#E50914] font-black text-3xl md:text-5xl cursor-pointer tracking-tighter">FLIX.</h1>
+        <h1 className="text-[#E50914] font-black text-3xl md:text-5xl cursor-pointer tracking-tighter">Verse</h1>
       </header>
 
       <div className="relative z-10 mx-auto w-full max-w-md rounded-xl glass px-6 py-12 md:px-16 md:py-16 mt-20 md:mt-0 shadow-2xl">
@@ -167,7 +167,7 @@ export function Login() {
         </button>
 
         <p className="mt-6 text-gray-400 font-medium text-sm">
-          {isSignUp ? 'Already have an account?' : 'New to Netflix?'}
+          {isSignUp ? 'Already have an account?' : 'New to Verse?'}
           <button 
             type="button"
              onClick={() => setIsSignUp(!isSignUp)}
