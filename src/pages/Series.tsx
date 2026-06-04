@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
-import { Hero } from '@/components/movies/Hero';
-import { Row } from '@/components/movies/Row';
-import { ContinueWatchingRow } from '@/components/movies/ContinueWatchingRow';
-import { requests } from '@/lib/tmdb';
+import { useEffect } from "react";
+import { Hero } from "@/components/movies/Hero";
+import { Row } from "@/components/movies/Row";
+import { ContinueWatchingRow } from "@/components/movies/ContinueWatchingRow";
+import { requests } from "@/lib/tmdb";
 
 export function Series() {
   useEffect(() => {
@@ -10,18 +10,27 @@ export function Series() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#050505] pb-16">
+    <div className="relative min-h-screen bg-[#050505]">
       <Hero type="tv" />
-      <div className="relative z-20 pb-24 top-[-2rem] md:top-[-4rem]">
+      <div className="relative z-20 pb-8 -mt-16 md:-mt-24">
         <ContinueWatchingRow />
-        <Row 
-          title="Trending Series" 
+        <Row
+          title="Trending Series"
           fetchUrl={requests.fetchTrendingSeries}
           isLargeRow
         />
-        <Row title="Verse Originals" fetchUrl={requests.fetchNetflixOriginals} />
+        <Row
+          title="Verse Originals"
+          fetchUrl={requests.fetchNetflixOriginals}
+        />
         <Row title="Popular Series" fetchUrl={requests.fetchPopularSeries} />
         <Row title="Top Rated Series" fetchUrl={requests.fetchTopRatedSeries} />
+        <Row
+          title="Sci-Fi & Fantasy"
+          fetchUrl={"/discover/tv?with_genres=10765"}
+        />
+        <Row title="Comedy Series" fetchUrl={"/discover/tv?with_genres=35"} />
+        <Row title="Drama Series" fetchUrl={"/discover/tv?with_genres=18"} />
       </div>
     </div>
   );

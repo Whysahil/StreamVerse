@@ -28,10 +28,9 @@ export function ContinueWatchingRow() {
   };
 
   return (
-    <div className="space-y-4 pt-6 px-4 md:px-12 group relative -mt-8 z-20 flex-grow pb-4">
-      <h2 className="text-xl font-semibold mb-6 flex items-center gap-3 text-white/90 hover:text-white transition-colors cursor-pointer w-fit">
+    <div className="space-y-2 py-4 px-4 md:px-12 group relative z-20">
+      <h2 className="text-lg md:text-xl font-bold mb-2 flex items-center gap-3 text-white/90 hover:text-white transition-colors cursor-pointer w-fit tracking-wide">
         Continue Watching for {currentProfile?.name}
-        <span className="w-8 h-px bg-white/20 hidden md:inline-block"></span>
       </h2>
       
       <div className="relative">
