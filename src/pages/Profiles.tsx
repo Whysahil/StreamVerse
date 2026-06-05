@@ -138,108 +138,113 @@ export function Profiles() {
 
   if (editingProfile || isCreating) {
     return (
-      <div className="relative min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center p-4 overflow-hidden">
+      <div className="relative min-h-screen bg-[#050505] text-white flex flex-col p-4 overflow-hidden">
         <BackgroundElements />
-        <div className="absolute top-0 left-0 w-full p-6 md:p-12 z-20">
-          <h1 className="text-[#E50914] text-3xl md:text-4xl font-extrabold tracking-tighter">Verse</h1>
+        
+        {/* NAVBAR */}
+        <div className="relative z-20 w-full flex justify-between items-center px-4 md:px-12 py-6 mb-8 md:mb-16 shrink-0">
+          <h1 className="text-[#E50914] text-3xl md:text-5xl font-extrabold tracking-tighter cursor-pointer">Verse</h1>
         </div>
 
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="relative z-10 flex flex-col md:flex-row gap-8 items-start mb-8 bg-white/5 backdrop-blur-xl border border-white/10 p-8 md:p-12 rounded-3xl shadow-2xl shrink-0 max-w-3xl w-full"
-        >
-          <div className="w-full text-center md:hidden mb-6">
-            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-              {isCreating ? 'Create Profile' : 'Edit Profile'}
-            </h1>
-          </div>
-          
-          <div className="flex flex-col items-center w-full md:w-auto">
-            <div className="relative mb-6">
-              <img 
-                src={DEFAULT_AVATARS[avatarIndex]} 
-                alt="Avatar" 
-                className="w-32 h-32 md:w-40 md:h-40 rounded-2xl object-cover border border-white/20 shadow-[-10px_-10px_30px_4px_rgba(0,0,0,0.1),_10px_10px_30px_4px_rgba(45,78,255,0.15)]"
-                onError={(e) => { e.currentTarget.src = DEFAULT_AVATARS[0]; }}
-              />
-            </div>
-            <div className="flex flex-wrap gap-3 justify-center w-full max-w-[300px]">
-              {DEFAULT_AVATARS.map((avatar, idx) => (
-                <button 
-                  key={idx}
-                  onClick={() => setAvatarIndex(idx)}
-                  className={`w-12 h-12 rounded-xl overflow-hidden border-2 transition-all duration-300 ${avatarIndex === idx ? 'border-white scale-110 shadow-[0_0_15px_rgba(255,255,255,0.4)]' : 'border-transparent opacity-60 hover:opacity-100 hover:scale-105'}`}
-                >
-                  <img src={avatar} alt="Avatar option" className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
-          </div>
-          
-          <div className="flex-1 w-full space-y-8 pt-4 md:pt-0">
-            <div className="hidden md:block mb-8">
-              <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+        {/* HERO SECTION */}
+        <div className="relative z-10 flex flex-col flex-1 items-center justify-center w-full max-w-5xl mx-auto pb-10">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex flex-col md:flex-row gap-8 items-start bg-white/5 backdrop-blur-xl border border-white/10 p-8 md:p-12 rounded-3xl shadow-2xl shrink-0 max-w-3xl w-full"
+          >
+            <div className="w-full text-center md:hidden mb-6">
+              <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
                 {isCreating ? 'Create Profile' : 'Edit Profile'}
               </h1>
             </div>
             
-            <div className="space-y-6">
-              <div>
-                <p className="text-sm text-gray-400 mb-2 ml-1">Profile Name</p>
-                <input 
-                  type="text" 
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter a name..."
-                  className="w-full bg-black/40 text-white text-lg px-6 py-4 rounded-xl border border-white/10 outline-none focus:border-white/40 focus:ring-1 focus:ring-white/40 transition-all placeholder:text-gray-600"
-                  autoFocus
+            <div className="flex flex-col items-center w-full md:w-auto shrink-0">
+              <div className="relative mb-6">
+                <img 
+                  src={DEFAULT_AVATARS[avatarIndex]} 
+                  alt="Avatar" 
+                  className="w-32 h-32 md:w-40 md:h-40 rounded-2xl object-cover border border-white/20 shadow-[-10px_-10px_30px_4px_rgba(0,0,0,0.1),_10px_10px_30px_4px_rgba(45,78,255,0.15)]"
+                  onError={(e) => { e.currentTarget.src = DEFAULT_AVATARS[0]; }}
                 />
               </div>
-
-              <div 
-                className="flex items-center justify-between bg-black/20 border border-white/5 p-4 rounded-xl cursor-pointer hover:bg-white/5 transition-colors"
-                onClick={() => setIsKids(!isKids)}
-              >
-                <div className="flex items-center gap-4">
-                  <div className={`p-3 rounded-lg ${isKids ? 'bg-cyan-500/20 text-cyan-400' : 'bg-gray-800 text-gray-400'}`}>
-                    <Baby className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-medium">Kids Profile</h4>
-                    <p className="text-sm text-gray-400">Only show family-friendly content</p>
-                  </div>
-                </div>
-                <div className={`w-12 h-6 rounded-full transition-colors relative ${isKids ? 'bg-cyan-500' : 'bg-gray-700'}`}>
-                  <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${isKids ? 'translate-x-6' : 'translate-x-0'}`} />
-                </div>
+              <div className="flex flex-wrap gap-3 justify-center w-full max-w-[300px]">
+                {DEFAULT_AVATARS.map((avatar, idx) => (
+                  <button 
+                    key={idx}
+                    onClick={() => setAvatarIndex(idx)}
+                    className={`w-12 h-12 rounded-xl overflow-hidden border-2 transition-all duration-300 ${avatarIndex === idx ? 'border-white scale-110 shadow-[0_0_15px_rgba(255,255,255,0.4)]' : 'border-transparent opacity-60 hover:opacity-100 hover:scale-105'}`}
+                  >
+                    <img src={avatar} alt="Avatar option" className="w-full h-full object-cover" />
+                  </button>
+                ))}
               </div>
             </div>
             
-            <div className="flex flex-wrap gap-4 pt-6 border-t border-white/10">
-              <button 
-                onClick={handleSave}
-                className="bg-white text-black font-semibold px-8 py-3 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                Save Profile
-              </button>
-              <button 
-                onClick={() => { setEditingProfile(null); setIsCreating(false); }}
-                className="border border-white/20 text-white font-semibold px-8 py-3 rounded-lg hover:bg-white/10 transition-colors"
-              >
-                Cancel
-              </button>
-              {editingProfile && profiles.length > 1 && (
-                <button 
-                  onClick={handleDelete}
-                  className="ml-auto flex items-center gap-2 text-red-500 font-medium px-4 py-3 rounded-lg hover:bg-red-500/10 transition-colors"
+            <div className="flex-1 w-full space-y-8 pt-4 md:pt-0">
+              <div className="hidden md:block mb-8">
+                <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                  {isCreating ? 'Create Profile' : 'Edit Profile'}
+                </h1>
+              </div>
+              
+              <div className="space-y-6">
+                <div>
+                  <p className="text-sm text-gray-400 mb-2 ml-1">Profile Name</p>
+                  <input 
+                    type="text" 
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter a name..."
+                    className="w-full bg-black/40 text-white text-lg px-6 py-4 rounded-xl border border-white/10 outline-none focus:border-white/40 focus:ring-1 focus:ring-white/40 transition-all placeholder:text-gray-600"
+                    autoFocus
+                  />
+                </div>
+
+                <div 
+                  className="flex items-center justify-between bg-black/20 border border-white/5 p-4 rounded-xl cursor-pointer hover:bg-white/5 transition-colors"
+                  onClick={() => setIsKids(!isKids)}
                 >
-                  <Trash2 className="w-5 h-5" /> Delete
+                  <div className="flex items-center gap-4">
+                    <div className={`p-3 rounded-lg ${isKids ? 'bg-cyan-500/20 text-cyan-400' : 'bg-gray-800 text-gray-400'}`}>
+                      <Baby className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="text-white font-medium">Kids Profile</h4>
+                      <p className="text-sm text-gray-400">Only show family-friendly content</p>
+                    </div>
+                  </div>
+                  <div className={`w-12 h-6 rounded-full transition-colors relative ${isKids ? 'bg-cyan-500' : 'bg-gray-700'}`}>
+                    <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${isKids ? 'translate-x-6' : 'translate-x-0'}`} />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex flex-wrap gap-4 pt-6 border-t border-white/10">
+                <button 
+                  onClick={handleSave}
+                  className="bg-white text-black font-semibold px-8 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Save Profile
                 </button>
-              )}
+                <button 
+                  onClick={() => { setEditingProfile(null); setIsCreating(false); }}
+                  className="border border-white/20 text-white font-semibold px-8 py-3 rounded-lg hover:bg-white/10 transition-colors"
+                >
+                  Cancel
+                </button>
+                {editingProfile && profiles.length > 1 && (
+                  <button 
+                    onClick={handleDelete}
+                    className="ml-auto flex items-center gap-2 text-red-500 font-medium px-4 py-3 rounded-lg hover:bg-red-500/10 transition-colors"
+                  >
+                    <Trash2 className="w-5 h-5" /> Delete
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
     );
   }
