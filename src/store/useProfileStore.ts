@@ -21,14 +21,16 @@ interface ProfileStore {
 }
 
 export const AVATAR_REGISTRY = [
-  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1521119989659-a83eee488004?w=400&h=400&fit=crop',
+  '/avatars/frog-thinking.svg',
+  '/avatars/frog-smoking.svg',
+  '/avatars/frog-pink.svg',
+  '/avatars/frog-orange.svg',
+  '/avatars/goose-yellow.svg',
+  '/avatars/goose-blue.svg',
+  '/avatars/monkey-smoking.svg',
+  '/avatars/monkey-king.svg',
+  '/avatars/discord-red.svg',
+  '/avatars/lal-guru.svg'
 ];
 
 let unsubscribeProfiles: (() => void) | null = null;
@@ -46,8 +48,17 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
     
     const docRef = doc(db, 'users', userId);
     unsubscribeProfiles = onSnapshot(docRef, (docSnap) => {
-      if (docSnap.exists() && docSnap.data().profiles) {
-        const loadedProfiles = docSnap.data().profiles;
+      const data = docSnap.exists() ? docSnap.data() : null;
+      if (data && data.profiles && data.profiles.length > 0) {
+        const loadedProfiles = data.profiles.map((p: Profile) => {
+          // Automatic migration of old stock images or .png to new SVG registry
+          if (!AVATAR_REGISTRY.includes(p.avatarUrl)) {
+            const fileName = p.avatarUrl.split('/').pop()?.replace(/\.[^/.]+$/, "");
+            const match = fileName ? AVATAR_REGISTRY.find(url => url.includes(fileName)) : null;
+            return { ...p, avatarUrl: match || AVATAR_REGISTRY[0] };
+          }
+          return p;
+        });
         set({ profiles: loadedProfiles });
         
         // Update current profile if it exists in the new list, or clear if deleted
@@ -82,16 +93,36 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
   },
 
   addProfile: async (userId, profile) => {
-    if (!db) return;
+    if (!db) {
+      console.error("Firestore db not initialized");
+      throw new Error("Database not initialized");
+    }
     const newProfile = { ...profile, id: Math.random().toString(36).substr(2, 9) };
     const newProfiles = [...get().profiles, newProfile];
-    await setDoc(doc(db, 'users', userId), { profiles: newProfiles }, { merge: true });
+    console.log("Saving new profile to firestore...");
+    try {
+      await setDoc(doc(db, 'users', userId), { profiles: newProfiles }, { merge: true });
+      console.log("Firestore write resolved success");
+    } catch (e) {
+      console.error("Firestore write failed:", e);
+      throw e;
+    }
   },
 
   updateProfile: async (userId, id, updatedProfile) => {
-    if (!db) return;
+    if (!db) {
+      console.error("Firestore db not initialized");
+      throw new Error("Database not initialized");
+    }
     const newProfiles = get().profiles.map(p => p.id === id ? { ...p, ...updatedProfile } : p);
-    await setDoc(doc(db, 'users', userId), { profiles: newProfiles }, { merge: true });
+    console.log("Updating profile in firestore...");
+    try {
+      await setDoc(doc(db, 'users', userId), { profiles: newProfiles }, { merge: true });
+      console.log("Firestore write resolved success");
+    } catch (e) {
+      console.error("Firestore write failed:", e);
+      throw e;
+    }
   },
 
   deleteProfile: async (userId, id) => {

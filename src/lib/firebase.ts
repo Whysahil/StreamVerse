@@ -1,6 +1,5 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -12,8 +11,9 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase only if config is present, to prevent crash without env vars during build/preview
+import { initializeFirestore } from 'firebase/firestore';
 const app = firebaseConfig.apiKey ? initializeApp(firebaseConfig) : null;
 const auth = app ? getAuth(app) : null;
-const db = app ? getFirestore(app) : null;
+const db = app ? initializeFirestore(app, { experimentalForceLongPolling: true }) : null;
 
 export { app, auth, db, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged };

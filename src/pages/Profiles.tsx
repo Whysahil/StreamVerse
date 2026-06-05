@@ -18,6 +18,7 @@ export function Profiles() {
   const [editingProfile, setEditingProfile] = useState<any>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
   
   const [name, setName] = useState('');
   const [avatarIndex, setAvatarIndex] = useState(0);
@@ -47,30 +48,71 @@ export function Profiles() {
     }
   };
 
+  const [error, setError] = useState<string | null>(null);
+
   const handleSave = async () => {
-    if (!name.trim() || !user) return;
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      setError("Profile name cannot be empty.");
+      return;
+    }
+    
+    if (trimmedName.length > 20) {
+      setError("Profile name must be 20 characters or less.");
+      return;
+    }
+
+    // Check for duplicate names (case-insensitive)
+    const isDuplicate = profiles.some(
+      (p) => p.name.toLowerCase() === trimmedName.toLowerCase() && p.id !== editingProfile?.id
+    );
+    if (isDuplicate) {
+      setError("A profile with this name already exists.");
+      return;
+    }
+
+    if (!user) {
+      setError("User not logged in.");
+      return;
+    }
+    
+    console.log("Save Started");
     setIsSaving(true);
+    setError(null);
     
     try {
       if (isCreating) {
+        console.log("Creating new profile...");
         await addProfile(user.uid, {
-          name,
+          name: trimmedName,
           avatarUrl: AVATAR_REGISTRY[avatarIndex],
           isKids
         });
+        console.log("Create profile resolved");
       } else if (editingProfile) {
+        console.log("Updating existing profile...", editingProfile.id);
         await updateProfile(user.uid, editingProfile.id, {
-          name,
+          name: trimmedName,
           avatarUrl: AVATAR_REGISTRY[avatarIndex],
           isKids
         });
+        console.log("Update profile resolved");
+      } else {
+        console.warn("Neither isCreating nor editingProfile is set");
       }
-      setEditingProfile(null);
-      setIsCreating(false);
-    } catch (e) {
-      console.error(e);
-      alert("Failed to save profile. Please try again.");
+      
+      console.log("Save Success - Resetting UI");
+      setSaveSuccess(true);
+      setTimeout(() => {
+        setSaveSuccess(false);
+        setEditingProfile(null);
+        setIsCreating(false);
+      }, 1000);
+    } catch (e: any) {
+      console.error("Profile creation/save failure:", e);
+      setError(e.message || "Failed to save profile. Please try again.");
     } finally {
+      console.log("Save Finally block - Turning off loading state");
       setIsSaving(false);
     }
   };
@@ -78,12 +120,13 @@ export function Profiles() {
   const handleDelete = async () => {
     if (editingProfile && user) {
       setIsSaving(true);
+      setError(null);
       try {
         await deleteProfile(user.uid, editingProfile.id);
         setEditingProfile(null);
-      } catch (e) {
+      } catch (e: any) {
          console.error(e);
-         alert("Failed to delete profile.");
+         setError(e.message || "Failed to delete profile.");
       } finally {
         setIsSaving(false);
       }
@@ -97,8 +140,9 @@ export function Profiles() {
       }
       setCurrentProfile(null);
       navigate('/login');
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error signing out", error);
+      setError("Failed to sign out. Please try again.");
     }
   };
 
@@ -114,7 +158,9 @@ export function Profiles() {
     } catch (error: any) {
       console.error("Error switching account", error);
       if (error.code === 'auth/unauthorized-domain') {
-        alert("This domain is not authorized for OAuth. Please add it to your Firebase Console under Authentication > Settings > Authorized domains. If you are in development preview, try opening the app in a new tab.");
+        setError("This domain is not authorized for OAuth. Please configure it in your Firebase Console, or try opening the app in a new tab.");
+      } else {
+        setError(error.message || "Failed to switch account.");
       }
     }
   };
@@ -182,19 +228,22 @@ export function Profiles() {
               <div className="relative mb-6">
                 <img 
                   src={AVATAR_REGISTRY[avatarIndex]} 
-                  alt="Avatar" 
-                  className="w-32 h-32 md:w-40 md:h-40 rounded-2xl object-cover border border-white/20 shadow-[-10px_-10px_30px_4px_rgba(0,0,0,0.1),_10px_10px_30px_4px_rgba(45,78,255,0.15)]"
-                  onError={(e) => { e.currentTarget.src = AVATAR_REGISTRY[0]; }}
+                  alt="Avatar preview" 
+                  className="w-32 h-32 md:w-48 md:h-48 rounded-2xl object-cover border-4 border-white shadow-[0_0_40px_rgba(255,255,255,0.15)] transition-all duration-300"
+                  onError={(e) => { 
+                    console.error("Avatar loading failure:", AVATAR_REGISTRY[avatarIndex]);
+                    e.currentTarget.src = AVATAR_REGISTRY[0]; 
+                  }}
                 />
               </div>
-              <div className="flex flex-wrap gap-3 justify-center w-full max-w-[300px]">
+              <div className="grid grid-cols-4 sm:grid-cols-5 gap-3 w-full max-w-sm mt-3">
                 {AVATAR_REGISTRY.map((avatar, idx) => (
                   <button 
                     key={idx}
                     onClick={() => setAvatarIndex(idx)}
-                    className={`w-12 h-12 rounded-xl overflow-hidden border-2 transition-all duration-300 ${avatarIndex === idx ? 'border-white scale-110 shadow-[0_0_15px_rgba(255,255,255,0.4)]' : 'border-transparent opacity-60 hover:opacity-100 hover:scale-105'}`}
+                    className={`relative w-full aspect-square rounded-xl overflow-hidden border-2 transition-all duration-300 ${avatarIndex === idx ? 'border-[#E50914] scale-110 shadow-[0_0_20px_rgba(229,9,20,0.6)] z-10' : 'border-transparent opacity-60 hover:opacity-100 hover:scale-105 hover:z-10'}`}
                   >
-                    <img src={avatar} alt="Avatar option" className="w-full h-full object-cover" />
+                    <img src={avatar} alt="Avatar option" className="absolute inset-0 w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
@@ -208,6 +257,11 @@ export function Profiles() {
               </div>
               
               <div className="space-y-6">
+                {error && (
+                  <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-4 rounded-xl">
+                    {error}
+                  </div>
+                )}
                 <div>
                   <p className="text-sm text-gray-400 mb-2 ml-1">Profile Name</p>
                   <input 
@@ -242,12 +296,16 @@ export function Profiles() {
               <div className="flex flex-wrap gap-4 pt-6 border-t border-white/10">
                 <button 
                   onClick={handleSave}
-                  className="bg-white text-black font-semibold px-8 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+                  disabled={!name.trim() || isSaving || saveSuccess}
+                  className={`bg-white text-black font-semibold px-8 py-3 rounded-lg hover:bg-gray-200 transition-colors ${
+                    (!name.trim() || isSaving || saveSuccess) ? "opacity-50 cursor-not-allowed hover:bg-white" : ""
+                  } ${saveSuccess ? "bg-green-500 text-white border-green-500 shadow-[0_0_20px_rgba(34,197,94,0.4)] opacity-100" : ""}`}
                 >
-                  Save Profile
+                  {isSaving ? "Saving..." : saveSuccess ? "Saved Successfully!" : "Save Profile"}
                 </button>
                 <button 
                   onClick={() => { setEditingProfile(null); setIsCreating(false); }}
+                  disabled={isSaving}
                   className="border border-white/20 text-white font-semibold px-8 py-3 rounded-lg hover:bg-white/10 transition-colors"
                 >
                   Cancel
@@ -279,7 +337,15 @@ export function Profiles() {
           <div className="relative" onMouseEnter={() => setShowDropdown(true)} onMouseLeave={() => setShowDropdown(false)}>
             <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 cursor-pointer">
               <div className="w-2 h-2 rounded-full bg-green-500" />
-              <img src={user.photoURL || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop"} alt="User" className="w-8 h-8 rounded-full object-cover" onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop"; }} />
+              <img 
+                src={user.photoURL || AVATAR_REGISTRY[0]} 
+                alt="User" 
+                className="w-8 h-8 rounded-full object-cover" 
+                onError={(e) => { 
+                  console.error("Avatar loading failure:", user.photoURL);
+                  e.currentTarget.src = AVATAR_REGISTRY[0]; 
+                }} 
+              />
             </div>
 
             {/* Dropdown Menu */}
@@ -356,12 +422,15 @@ export function Profiles() {
                   className="relative mb-4"
                 >
                   <div className="w-28 h-28 md:w-40 md:h-40 rounded-2xl overflow-hidden border border-white/10 group-hover:border-white/50 transition-all duration-300 shadow-xl group-hover:shadow-[0_0_30px_rgba(229,9,20,0.4)] group-hover:ring-2 ring-transparent group-hover:ring-[#E50914]/50">
-                    <img 
-                      src={profile.avatarUrl} 
-                      alt={profile.name} 
-                      className="w-full h-full object-cover select-none"
-                      onError={(e) => { e.currentTarget.src = AVATAR_REGISTRY[0]; }}
-                    />
+                  <img 
+                    src={profile.avatarUrl} 
+                    alt={profile.name} 
+                    className="w-full h-full object-cover select-none"
+                    onError={(e) => { 
+                      console.error("Avatar loading failure:", profile.avatarUrl); 
+                      e.currentTarget.src = AVATAR_REGISTRY[0]; 
+                    }}
+                  />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
                   {isManaging && (
@@ -376,7 +445,7 @@ export function Profiles() {
               </motion.div>
             ))}
             
-            {profiles.length < 5 && (
+            {profiles.length < 3 ? (
               <motion.div 
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -401,6 +470,10 @@ export function Profiles() {
                   Add Profile
                 </span>
               </motion.div>
+            ) : (
+              <div className="flex flex-col items-center justify-center w-28 h-28 md:w-40 md:h-40 mb-4 rounded-2xl border border-white/5 bg-white/5 opacity-50">
+                 <p className="text-xs md:text-sm text-gray-500 text-center px-4">Profile limit reached<br/>(Max 3)</p>
+              </div>
             )}
           </AnimatePresence>
         </motion.div>

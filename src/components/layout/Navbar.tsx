@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Search, Bell, User as UserIcon, LogOut, Users, ChartNoAxesCombined, Info } from "lucide-react";
 import { auth, signOut } from "@/lib/firebase";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useProfileStore } from "@/store/useProfileStore";
+import { useProfileStore, AVATAR_REGISTRY } from "@/store/useProfileStore";
 import { cn } from "@/lib/utils";
 import { useListStore } from "@/store/useListStore";
 
@@ -140,8 +140,8 @@ export function Navbar() {
                     alt={currentProfile.name}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src =
-                        "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop";
+                      console.error("Avatar loading failure:", currentProfile.avatarUrl);
+                      e.currentTarget.src = AVATAR_REGISTRY[0];
                     }}
                   />
                 ) : user.photoURL ? (
@@ -167,8 +167,8 @@ export function Navbar() {
                       src={currentProfile?.avatarUrl || user.photoURL || ""}
                       className="w-10 h-10 rounded-md object-cover shrink-0"
                       onError={(e) => {
-                        e.currentTarget.src =
-                          "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop";
+                        console.error("Avatar loading failure in dropdown:", currentProfile?.avatarUrl);
+                        e.currentTarget.src = AVATAR_REGISTRY[0];
                       }}
                     />
                     <div className="flex flex-col overflow-hidden flex-1 min-w-0">
