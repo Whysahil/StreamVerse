@@ -141,9 +141,39 @@ export function Search() {
             </div>
           )}
           
-          <div className={recentSearches.length === 0 ? "col-span-full" : ""}>
+          <div className={recentSearches.length === 0 ? "col-span-full" : "col-span-1"}>
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-white">
-              <TrendingUp className="w-5 h-5 text-gray-400" /> Recommended
+              <TrendingUp className="w-5 h-5 text-[#E50914]" /> Trending Searches
+            </h3>
+            <div className="flex flex-wrap gap-2 mb-8">
+              {['Avatar', 'Inception', 'Breaking Bad', 'Marvel', 'Stranger Things'].map((term) => (
+                <button 
+                  key={term}
+                  onClick={() => setQuery(term)}
+                  className="px-4 py-2 rounded-full bg-[#141414] border border-white/10 text-gray-300 hover:text-white hover:border-white/30 transition-all font-medium text-sm"
+                >
+                  {term}
+                </button>
+              ))}
+            </div>
+
+            <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-white">
+              <SearchIcon className="w-5 h-5 text-purple-500" /> Browse by Genre
+            </h3>
+            <div className="flex flex-wrap gap-2 mb-8">
+              {['Action', 'Comedy', 'Sci-Fi', 'Romance', 'Thriller', 'Horror', 'Documentary'].map((genre) => (
+                <button 
+                  key={genre}
+                  onClick={() => setQuery(genre)}
+                  className="px-4 py-2 rounded-full bg-white/5 border border-white/5 text-gray-300 hover:text-white hover:bg-white/10 transition-all font-medium text-sm"
+                >
+                  {genre}
+                </button>
+              ))}
+            </div>
+
+            <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-white mt-10 border-b border-white/10 pb-2">
+              Recommended For You
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {recommended.map((movie) => (

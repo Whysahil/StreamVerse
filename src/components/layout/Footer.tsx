@@ -1,93 +1,72 @@
-import { Github, Twitter, Linkedin, Instagram } from "lucide-react";
+import { Github, Twitter, Linkedin, Instagram, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="mt-8 py-12 px-4 md:px-12 border-t border-white/10 text-gray-500 text-sm w-full bg-[#141414] animate-in fade-in duration-1000 fill-mode-both">
+    <footer className="mt-12 py-12 px-4 md:px-12 border-t border-white/5 text-gray-400 text-sm w-full bg-[#050505] animate-in fade-in duration-1000 fill-mode-both">
       <div className="max-w-5xl mx-auto flex flex-col items-center justify-center">
-        <div className="mb-8 flex gap-6 justify-center">
+        <div className="mb-10 flex gap-8 justify-center">
           <a
-            href="#"
-            className="hover:text-white transition-colors"
-            aria-label="Github"
+            href="https://github.com/Whysahil"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-400 hover:text-white transition-all transform hover:scale-110 duration-300"
+            aria-label="GitHub"
           >
             <Github className="w-6 h-6" />
           </a>
           <a
-            href="#"
-            className="hover:text-white transition-colors"
-            aria-label="Instagram"
+            href="https://www.linkedin.com/in/sahil-kumar-297a40323"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-400 hover:text-white transition-all transform hover:scale-110 duration-300"
+            aria-label="LinkedIn"
           >
-            <Instagram className="w-6 h-6" />
+            <Linkedin className="w-6 h-6" />
           </a>
           <a
-            href="#"
-            className="hover:text-white transition-colors"
-            aria-label="Twitter"
+            href="https://x.com/imSahilpvt"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-400 hover:text-white transition-all transform hover:scale-110 duration-300"
+            aria-label="Twitter/X"
           >
             <Twitter className="w-6 h-6" />
           </a>
           <a
             href="#"
-            className="hover:text-white transition-colors"
-            aria-label="LinkedIn"
+            className="text-gray-400 hover:text-white transition-all transform hover:scale-110 duration-300"
+            aria-label="Instagram"
           >
-            <Linkedin className="w-6 h-6" />
+            <Instagram className="w-6 h-6" />
           </a>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-3 mb-10 text-center w-full max-w-4xl">
-          <a href="#" className="hover:underline">
-            Audio Description
-          </a>
-          <a href="#" className="hover:underline">
-            Help Center
-          </a>
-          <a href="#" className="hover:underline">
-            Gift Cards
-          </a>
-          <a href="#" className="hover:underline">
-            Media Center
-          </a>
-          <a href="#" className="hover:underline">
-            Investor Relations
-          </a>
-          <a href="#" className="hover:underline">
-            Jobs
-          </a>
-          <a href="#" className="hover:underline">
-            Terms of Use
-          </a>
-          <a href="#" className="hover:underline">
-            Privacy
-          </a>
-          <a href="#" className="hover:underline">
-            Legal Notices
-          </a>
-          <a href="#" className="hover:underline">
-            Cookie Preferences
-          </a>
-          <a href="#" className="hover:underline">
-            Corporate Information
-          </a>
-          <a href="#" className="hover:underline">
+        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 mb-10 text-center w-full max-w-2xl">
+          <Link to="/about" className="hover:text-white transition-colors font-medium text-base">
+            About Verse
+          </Link>
+          <a href="mailto:sahilkumar854327@gmail.com" className="hover:text-white transition-colors font-medium text-base">
             Contact Us
           </a>
         </div>
 
         <div className="flex flex-col items-center gap-4 text-center mt-2 w-full">
-          <p className="text-gray-400">
+          <p className="text-gray-500">
             &copy; {currentYear} Verse. All Rights Reserved.
           </p>
 
-          <div className="h-px w-32 bg-gradient-to-r from-transparent via-gray-600 to-transparent my-1" />
+          <div className="h-px w-24 bg-gradient-to-r from-transparent via-white/10 to-transparent my-2" />
 
-          <p className="text-gray-200 text-base md:text-lg leading-relaxed flex items-center justify-center gap-2">
-            Designed & Developed by{" "}
-            <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#E50914] to-purple-500 hover:drop-shadow-[0_0_12px_rgba(229,9,20,0.8)] transition-all duration-300 inline-block transform hover:scale-110 cursor-default">
-              Sahil Singh
-            </span>
+          <p className="text-gray-400 text-base flex items-center justify-center gap-2">
+            Built by{" "}
+            <Link to="/about" className="group">
+              <span className="font-bold text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#E50914] group-hover:to-purple-500 transition-all duration-300">
+                Sahil Singh
+              </span>
+            </Link>
           </p>
         </div>
       </div>

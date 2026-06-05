@@ -18,11 +18,11 @@ interface ProfileStore {
 }
 
 export const DEFAULT_AVATARS = [
-  'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1557683316-973673baf926?w=200&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=200&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=200&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=200&h=200&fit=crop'
+  'https://api.dicebear.com/7.x/pixel-art/svg?seed=Ape&backgroundColor=ffdfbf', // Ape
+  'https://api.dicebear.com/7.x/pixel-art/svg?seed=Duck&backgroundColor=c0aede', // Duck
+  'https://api.dicebear.com/7.x/pixel-art/svg?seed=Frog&backgroundColor=b6e3f4', // Frog/Pepe
+  'https://api.dicebear.com/7.x/pixel-art/svg?seed=Cloud&backgroundColor=d1d4f9', // Cloud
+  'https://api.dicebear.com/7.x/pixel-art/svg?seed=King&backgroundColor=ffd5dc', // King
 ];
 
 export const useProfileStore = create<ProfileStore>()(

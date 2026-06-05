@@ -23,6 +23,7 @@ export function Films() {
         <Row title="Top Rated Movies" fetchUrl={requests.fetchTopRatedMovies} />
         <Row title="Action" fetchUrl={requests.fetchActionMovies} />
         <Row title="Comedy" fetchUrl={requests.fetchComedyMovies} />
+        <Row title="Drama" fetchUrl={"/discover/movie?with_genres=18"} />
         <Row title="Thriller" fetchUrl={"/discover/movie?with_genres=53"} />
         <Row title="Sci-Fi" fetchUrl={requests.fetchSciFiMovies} />
         <Row title="Horror" fetchUrl={"/discover/movie?with_genres=27"} />

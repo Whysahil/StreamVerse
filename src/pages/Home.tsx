@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Hero } from "@/components/movies/Hero";
 import { Row } from "@/components/movies/Row";
 import { ContinueWatchingRow } from "@/components/movies/ContinueWatchingRow";
+import { MoodDiscovery } from "@/components/movies/MoodDiscovery";
 import { requests } from "@/lib/tmdb";
 
 export function Home() {
@@ -13,6 +14,7 @@ export function Home() {
     <div className="relative min-h-screen bg-[#050505]">
       <Hero />
       <div className="relative z-20 pb-8 -mt-16 md:-mt-24">
+        <MoodDiscovery />
         <ContinueWatchingRow />
         <Row
           title="Trending Now"

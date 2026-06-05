@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, Bell, User as UserIcon, LogOut, Users } from "lucide-react";
+import { Search, Bell, User as UserIcon, LogOut, Users, ChartNoAxesCombined, Info } from "lucide-react";
 import { auth, signOut } from "@/lib/firebase";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useProfileStore } from "@/store/useProfileStore";
@@ -160,8 +160,8 @@ export function Navbar() {
             </div>
 
             {showProfileMenu && (
-              <div className="absolute top-8 right-0 pt-4 w-48 animate-in fade-in slide-in-from-top-2 duration-200">
-                <div className="bg-[#141414] border border-white/10 rounded overflow-hidden flex flex-col shadow-2xl">
+              <div className="absolute top-8 right-0 pt-4 w-52 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="bg-[#141414] border border-white/10 rounded-xl overflow-hidden flex flex-col shadow-2xl pb-1">
                   <div className="px-4 py-3 border-b border-white/10 flex items-center gap-3">
                     <img
                       src={currentProfile?.avatarUrl || user.photoURL || ""}
@@ -172,7 +172,7 @@ export function Navbar() {
                       }}
                     />
                     <div className="flex flex-col overflow-hidden">
-                      <p className="text-sm font-medium truncate text-white">
+                      <p className="text-sm font-bold truncate text-white">
                         {currentProfile?.name || user.displayName || "Guest"}
                       </p>
                       <p className="text-xs text-gray-400 truncate w-full">
@@ -182,13 +182,25 @@ export function Navbar() {
                   </div>
                   <Link
                     to="/profiles"
-                    className="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
                   >
                     <Users className="w-4 h-4" /> Manage Profiles
                   </Link>
+                  <Link
+                    to="/insights"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                  >
+                    <ChartNoAxesCombined className="w-4 h-4" /> My Insights
+                  </Link>
+                  <Link
+                    to="/about"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+                  >
+                    <Info className="w-4 h-4" /> About Verse
+                  </Link>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors text-left border-t border-white/10"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors text-left border-t border-white/10 mt-1"
                   >
                     <LogOut className="w-4 h-4" /> Sign out
                   </button>

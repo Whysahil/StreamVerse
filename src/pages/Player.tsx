@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Loader2, AlertCircle } from 'lucide-react';
 import { useTrailer } from '@/hooks/useTrailer';
@@ -14,29 +14,47 @@ export function Player() {
   const { currentProfile } = useProfileStore();
   const { addToHistory } = useWatchStore();
   
+  // Real-time tracking mock
+  const [progress, setProgress] = useState(0);
+  const startTime = useRef(Date.now());
+  
   useEffect(() => {
-    async function loadAndTrack() {
-      if (!type || !id || !currentProfile) return;
-      const data = await fetchTMDB(requests.fetchMovieDetails(type, id));
-      if (data) {
-        addToHistory(currentProfile.id, { ...data, media_type: type as any }, Math.random() * 0.8 + 0.1);
-      }
+    let interval: NodeJS.Timeout;
+    if (videoId && !trailerLoading) {
+      interval = setInterval(() => {
+        // Simulate progress increment
+        setProgress((prev) => Math.min(prev + 0.05, 1));
+      }, 5000); 
     }
-    loadAndTrack();
-  }, [type, id, currentProfile, addToHistory]);
+    return () => clearInterval(interval);
+  }, [videoId, trailerLoading]);
+
+  useEffect(() => {
+    return () => {
+      // Save progress on exit
+      async function saveProgress() {
+        if (!type || !id || !currentProfile) return;
+        const data = await fetchTMDB(requests.fetchMovieDetails(type, id));
+        if (data) {
+          // If they just started, let's mark it minimally tracking
+          const finalProgress = progress < 0.1 ? 0.1 : progress; 
+          addToHistory(currentProfile.id, { ...data, media_type: type as any }, finalProgress);
+        }
+      }
+      saveProgress();
+    };
+  }, [type, id, currentProfile, addToHistory, progress]);
 
   return (
     <div className="fixed inset-0 bg-black z-[100] flex items-center justify-center">
-      {/* Back Button */}
       <button 
         onClick={() => navigate(-1)}
         className="absolute top-4 md:top-8 left-4 md:left-8 z-50 text-white hover:text-gray-300 transition-colors flex items-center gap-2 text-xl font-medium drop-shadow-md bg-black/40 p-2 rounded-full md:bg-transparent md:p-0"
       >
         <ArrowLeft className="w-8 h-8" />
-        <span className="drop-shadow-md">Back</span>
+        <span className="drop-shadow-md hidden md:inline">Back</span>
       </button>
 
-      {/* Loading State */}
       {trailerLoading && (
         <div className="flex flex-col items-center justify-center gap-4">
           <Loader2 className="w-12 h-12 text-[#E50914] animate-spin" />
@@ -44,7 +62,6 @@ export function Player() {
         </div>
       )}
 
-      {/* Error State: No video available */}
       {!trailerLoading && !videoId && (
         <div className="flex flex-col items-center justify-center gap-4 text-center max-w-md px-4">
           <AlertCircle className="w-16 h-16 text-red-500" />
@@ -55,9 +72,8 @@ export function Player() {
         </div>
       )}
 
-      {/* YouTube Player */}
       {!trailerLoading && videoId && (
-        <div className="w-full h-full animate-in fade-in duration-500">
+        <div className="w-full h-full animate-in fade-in duration-500 relative">
           <iframe
             className="w-full h-full"
             src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=0&controls=1&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&fs=1&playsinline=1`}
