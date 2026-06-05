@@ -5,6 +5,7 @@ import { useTrailer } from '@/hooks/useTrailer';
 import { fetchTMDB, requests } from '@/lib/tmdb';
 import { useWatchStore } from '@/store/useWatchStore';
 import { useProfileStore } from '@/store/useProfileStore';
+import { trackWatchEvent } from '@/lib/tracking';
 
 export function Player() {
   const { type, id } = useParams();
@@ -38,7 +39,11 @@ export function Player() {
         if (data) {
           // If they just started, let's mark it minimally tracking
           const finalProgress = progress < 0.1 ? 0.1 : progress; 
-          addToHistory(currentProfile.id, { ...data, media_type: type as any }, finalProgress);
+          const movie = { ...data, media_type: type as any };
+          addToHistory(currentProfile.id, movie, finalProgress);
+          
+          const durationMs = Date.now() - startTime.current;
+          await trackWatchEvent(movie, finalProgress, durationMs);
         }
       }
       saveProgress();

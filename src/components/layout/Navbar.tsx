@@ -59,10 +59,10 @@ export function Navbar() {
           : "bg-gradient-to-b from-black/90 to-transparent",
       )}
     >
-      <div className="flex items-center gap-8 md:gap-10">
+      <div className="flex items-center gap-8 md:gap-10 shrink-0">
         <Link
           to="/"
-          className="text-[#E50914] font-black text-2xl md:text-4xl tracking-tighter hover:scale-105 transition-transform select-none"
+          className="text-[#E50914] font-black text-2xl md:text-4xl tracking-tighter hover:scale-105 transition-transform select-none shrink-0"
         >
           Verse
         </Link>
@@ -165,13 +165,13 @@ export function Navbar() {
                   <div className="px-4 py-3 border-b border-white/10 flex items-center gap-3">
                     <img
                       src={currentProfile?.avatarUrl || user.photoURL || ""}
-                      className="w-10 h-10 rounded-md object-cover"
+                      className="w-10 h-10 rounded-md object-cover shrink-0"
                       onError={(e) => {
                         e.currentTarget.src =
                           "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&h=200&fit=crop";
                       }}
                     />
-                    <div className="flex flex-col overflow-hidden">
+                    <div className="flex flex-col overflow-hidden flex-1 min-w-0">
                       <p className="text-sm font-bold truncate text-white">
                         {currentProfile?.name || user.displayName || "Guest"}
                       </p>

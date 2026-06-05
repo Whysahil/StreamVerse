@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useProfileStore, DEFAULT_AVATARS } from '@/store/useProfileStore';
+import { useProfileStore, AVATAR_REGISTRY } from '@/store/useProfileStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { auth, signOut, signInWithPopup, GoogleAuthProvider } from '@/lib/firebase';
 import { PlusCircle, Pencil, Trash2, Settings, LogOut, UserPlus, ArrowRight, Baby } from 'lucide-react';
@@ -11,12 +11,13 @@ function cn(...classes: (string | undefined | null | false)[]) {
 }
 
 export function Profiles() {
-  const { profiles, setCurrentProfile, addProfile, updateProfile, deleteProfile } = useProfileStore();
+  const { profiles, setCurrentProfile, addProfile, updateProfile, deleteProfile, loadProfiles, clearProfiles } = useProfileStore();
   const { user, loading } = useAuthStore();
   const navigate = useNavigate();
   const [isManaging, setIsManaging] = useState(false);
   const [editingProfile, setEditingProfile] = useState<any>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   
   const [name, setName] = useState('');
   const [avatarIndex, setAvatarIndex] = useState(0);
@@ -26,16 +27,19 @@ export function Profiles() {
   useEffect(() => {
     // If not logged in and auth state has loaded, redirect to login
     if (!loading && !user) {
+      clearProfiles();
       navigate('/login');
+    } else if (user) {
+      loadProfiles(user.uid);
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, loadProfiles, clearProfiles]);
 
   const handleProfileClick = (profile: any) => {
     if (isManaging) {
       setEditingProfile(profile);
       setName(profile.name);
       setIsKids(profile.isKids || false);
-      const index = DEFAULT_AVATARS.indexOf(profile.avatarUrl);
+      const index = AVATAR_REGISTRY.indexOf(profile.avatarUrl);
       setAvatarIndex(index >= 0 ? index : 0);
     } else {
       setCurrentProfile(profile);
@@ -43,31 +47,46 @@ export function Profiles() {
     }
   };
 
-  const handleSave = () => {
-    if (!name.trim()) return;
+  const handleSave = async () => {
+    if (!name.trim() || !user) return;
+    setIsSaving(true);
     
-    if (isCreating) {
-      addProfile({
-        name,
-        avatarUrl: DEFAULT_AVATARS[avatarIndex],
-        isKids
-      });
-    } else if (editingProfile) {
-      updateProfile(editingProfile.id, {
-        name,
-        avatarUrl: DEFAULT_AVATARS[avatarIndex],
-        isKids
-      });
+    try {
+      if (isCreating) {
+        await addProfile(user.uid, {
+          name,
+          avatarUrl: AVATAR_REGISTRY[avatarIndex],
+          isKids
+        });
+      } else if (editingProfile) {
+        await updateProfile(user.uid, editingProfile.id, {
+          name,
+          avatarUrl: AVATAR_REGISTRY[avatarIndex],
+          isKids
+        });
+      }
+      setEditingProfile(null);
+      setIsCreating(false);
+    } catch (e) {
+      console.error(e);
+      alert("Failed to save profile. Please try again.");
+    } finally {
+      setIsSaving(false);
     }
-    
-    setEditingProfile(null);
-    setIsCreating(false);
   };
   
-  const handleDelete = () => {
-    if (editingProfile) {
-      deleteProfile(editingProfile.id);
-      setEditingProfile(null);
+  const handleDelete = async () => {
+    if (editingProfile && user) {
+      setIsSaving(true);
+      try {
+        await deleteProfile(user.uid, editingProfile.id);
+        setEditingProfile(null);
+      } catch (e) {
+         console.error(e);
+         alert("Failed to delete profile.");
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 
@@ -162,14 +181,14 @@ export function Profiles() {
             <div className="flex flex-col items-center w-full md:w-auto shrink-0">
               <div className="relative mb-6">
                 <img 
-                  src={DEFAULT_AVATARS[avatarIndex]} 
+                  src={AVATAR_REGISTRY[avatarIndex]} 
                   alt="Avatar" 
                   className="w-32 h-32 md:w-40 md:h-40 rounded-2xl object-cover border border-white/20 shadow-[-10px_-10px_30px_4px_rgba(0,0,0,0.1),_10px_10px_30px_4px_rgba(45,78,255,0.15)]"
-                  onError={(e) => { e.currentTarget.src = DEFAULT_AVATARS[0]; }}
+                  onError={(e) => { e.currentTarget.src = AVATAR_REGISTRY[0]; }}
                 />
               </div>
               <div className="flex flex-wrap gap-3 justify-center w-full max-w-[300px]">
-                {DEFAULT_AVATARS.map((avatar, idx) => (
+                {AVATAR_REGISTRY.map((avatar, idx) => (
                   <button 
                     key={idx}
                     onClick={() => setAvatarIndex(idx)}
@@ -341,7 +360,7 @@ export function Profiles() {
                       src={profile.avatarUrl} 
                       alt={profile.name} 
                       className="w-full h-full object-cover select-none"
-                      onError={(e) => { e.currentTarget.src = DEFAULT_AVATARS[0]; }}
+                      onError={(e) => { e.currentTarget.src = AVATAR_REGISTRY[0]; }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
@@ -366,7 +385,7 @@ export function Profiles() {
                 onClick={() => {
                   setName('');
                   const usedAvatars = profiles.map(p => p.avatarUrl);
-                  const firstUnusedIndex = DEFAULT_AVATARS.findIndex(avatar => !usedAvatars.includes(avatar));
+                  const firstUnusedIndex = AVATAR_REGISTRY.findIndex(avatar => !usedAvatars.includes(avatar));
                   setAvatarIndex(firstUnusedIndex !== -1 ? firstUnusedIndex : 0);
                   setIsCreating(true);
                 }}

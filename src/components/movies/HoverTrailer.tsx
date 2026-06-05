@@ -6,6 +6,7 @@ import { useListStore } from "@/store/useListStore";
 import { useTrailer } from "@/hooks/useTrailer";
 import { cn } from "@/lib/utils";
 import type { Movie } from "@/types";
+import { trackActivityEvent } from "@/lib/tracking";
 
 interface HoverTrailerProps {
   movie: Movie;
@@ -50,12 +51,17 @@ export function HoverTrailer({ movie, isLargeRow, inGrid }: HoverTrailerProps) {
 
   const toggleList = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isSaved) removeFromList(movie.id);
-    else addToList(movie);
+    if (isSaved) {
+      removeFromList(movie.id);
+    } else {
+      addToList(movie);
+      trackActivityEvent('list_add', { ...movie, media_type: mediaType as any });
+    }
   };
 
   const navigateToDetails = (e: React.MouseEvent) => {
     e.stopPropagation();
+    trackActivityEvent('click', { ...movie, media_type: mediaType as any });
     navigate(`/movie/${mediaType}/${movie.id}`);
   };
 

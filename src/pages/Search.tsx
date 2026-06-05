@@ -4,6 +4,7 @@ import { fetchTMDB, requests } from '@/lib/tmdb';
 import type { Movie } from '@/types';
 import { Loader2, Search as SearchIcon, Clock, TrendingUp, X } from 'lucide-react';
 import { HoverTrailer } from '@/components/movies/HoverTrailer';
+import { trackActivityEvent } from '@/lib/tracking';
 
 function useDebounce(value: string, delay: number) {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -93,6 +94,7 @@ export function Search() {
       // Save to recent if it's a substantive search
       if (debouncedQuery.length > 2) {
         saveRecentSearch(debouncedQuery);
+        trackActivityEvent('search', null, 0, 0, debouncedQuery);
       }
     }
     
