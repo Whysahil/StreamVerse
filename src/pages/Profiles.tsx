@@ -110,7 +110,8 @@ export function Profiles() {
       }, 1000);
     } catch (e: any) {
       console.error("Profile creation/save failure:", e);
-      setError(e.message || "Failed to save profile. Please try again.");
+      const code = e?.code ? ` (Code: ${e.code})` : '';
+      setError((e.message || "Failed to save profile. Please try again.") + code);
     } finally {
       console.log("Save Finally block - Turning off loading state");
       setIsSaving(false);
@@ -126,7 +127,8 @@ export function Profiles() {
         setEditingProfile(null);
       } catch (e: any) {
          console.error(e);
-         setError(e.message || "Failed to delete profile.");
+         const code = e?.code ? ` (Code: ${e.code})` : '';
+         setError((e.message || "Failed to delete profile.") + code);
       } finally {
         setIsSaving(false);
       }

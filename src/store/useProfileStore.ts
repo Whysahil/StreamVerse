@@ -100,11 +100,22 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
     const newProfile = { ...profile, id: Math.random().toString(36).substr(2, 9) };
     const newProfiles = [...get().profiles, newProfile];
     console.log("Saving new profile to firestore...");
+    
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Timeout: Database is unreachable or write permission denied.")), 8000)
+    );
+    
     try {
-      await setDoc(doc(db, 'users', userId), { profiles: newProfiles }, { merge: true });
+      await Promise.race([
+        setDoc(doc(db, 'users', userId), { profiles: newProfiles }, { merge: true }),
+        timeoutPromise
+      ]);
       console.log("Firestore write resolved success");
-    } catch (e) {
+      // Update local state ONLY on success
+      set({ profiles: newProfiles });
+    } catch (e: any) {
       console.error("Firestore write failed:", e);
+      // Ensure we throw so the UI can catch it and show an error
       throw e;
     }
   },
@@ -116,10 +127,20 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
     }
     const newProfiles = get().profiles.map(p => p.id === id ? { ...p, ...updatedProfile } : p);
     console.log("Updating profile in firestore...");
+    
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Timeout: Database is unreachable or write permission denied.")), 8000)
+    );
+    
     try {
-      await setDoc(doc(db, 'users', userId), { profiles: newProfiles }, { merge: true });
+      await Promise.race([
+        setDoc(doc(db, 'users', userId), { profiles: newProfiles }, { merge: true }),
+        timeoutPromise
+      ]);
       console.log("Firestore write resolved success");
-    } catch (e) {
+      // Update local state ONLY on success
+      set({ profiles: newProfiles });
+    } catch (e: any) {
       console.error("Firestore write failed:", e);
       throw e;
     }
@@ -128,7 +149,21 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
   deleteProfile: async (userId, id) => {
     if (!db) return;
     const newProfiles = get().profiles.filter(p => p.id !== id);
-    await setDoc(doc(db, 'users', userId), { profiles: newProfiles }, { merge: true });
+    
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Timeout: Database is unreachable or write permission denied.")), 8000)
+    );
+    
+    try {
+      await Promise.race([
+        setDoc(doc(db, 'users', userId), { profiles: newProfiles }, { merge: true }),
+        timeoutPromise
+      ]);
+      set({ profiles: newProfiles, currentProfile: get().currentProfile?.id === id ? null : get().currentProfile });
+    } catch(e: any) {
+       console.error("Delete profile firestore outcome:", e);
+       throw e;
+    }
   },
 
   setCurrentProfile: (profile) => {
